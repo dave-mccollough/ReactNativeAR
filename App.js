@@ -2,31 +2,38 @@ import React, {useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {
   ViroARScene,
-  ViroText,
   ViroARSceneNavigator,
-  ViroTrackingStateConstants,
+  ViroBox,
+  ViroMaterials,
+  ViroAnimations,
 } from '@viro-community/react-viro';
 
-const HelloWorldSceneAR = () => {
-  const [text, setText] = useState('Initializing AR...');
+const MyScene = () => {
+  ViroMaterials.createMaterials({
+    side: {
+      diffuseTexture: require('./assets/acme.jpeg'),
+    },
+  });
 
-  function onInitialized(state, reason) {
-    console.log('guncelleme', state, reason);
-
-    if (state === ViroTrackingStateConstants.TRACKING_NORMAL) {
-      setText('Hello World!');
-    } else if (state === ViroTrackingStateConstants.TRACKING_NONE) {
-      // Handle loss of tracking
-    }
-  }
+  ViroAnimations.registerAnimations({
+    rotate: {
+      duration: 2500,
+      properties: {
+        rotateY: '+=90',
+      },
+    },
+  });
 
   return (
-    <ViroARScene onTrackingUpdated={onInitialized}>
-      <ViroText
-        text={text}
-        scale={[0.5, 0.5, 0.5]}
+    <ViroARScene>
+      <ViroBox
+        height={2}
+        length={2}
+        width={2}
+        scale={[0.2, 0.2, 0.2]}
         position={[0, 0, -1]}
-        style={styles.helloWorldTextStyle}
+        materials={['side']}
+        animation={{name: 'rotate', loop: true, run: true}}
       />
     </ViroARScene>
   );
@@ -35,22 +42,12 @@ const HelloWorldSceneAR = () => {
 export default () => {
   return (
     <ViroARSceneNavigator
-      autofocus={true}
       initialScene={{
-        scene: HelloWorldSceneAR,
+        scene: MyScene,
       }}
-      style={styles.f1}
+      style={{flex: 1}}
     />
   );
 };
 
-var styles = StyleSheet.create({
-  f1: {flex: 1},
-  helloWorldTextStyle: {
-    fontFamily: 'Arial',
-    fontSize: 30,
-    color: '#ffffff',
-    textAlignVertical: 'center',
-    textAlign: 'center',
-  },
-});
+var styles = StyleSheet.create({});
